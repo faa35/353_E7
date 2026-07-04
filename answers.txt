@@ -1,0 +1,21 @@
+1.
+residuals are not perfectly normal, 
+but it look close enough to use the OLS p value as reasonable
+most residuals are centered around 0. Also there are some unusual values 
+and the data is not perfectly bell shaped.
+p value from the regression is extremely small
+and  slope is positive.
+so I think the ratings have been increasing over time.
+but, the conclusion should be a little careful because dog ratings are not perfectly normal continuous data.
+
+2. 
+yes, i think that the new “better” prediction is letting the Kalman filter do a better job capturing the true signal in the noise
+In validation plot, the green smoothed line follows the overall temperature trend.
+it ignores many of the noisy blue temperature points. 
+as the transition model now use 
+temperature, 
+cpu percent, 
+fan speed, 
+system load, 
+cpu frequency,
+it has more useful information than just assuming the next temperature will be the same as current one
