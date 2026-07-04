@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import sys
 from pykalman import KalmanFilter
 
+from sklearn.linear_model import LinearRegression
+
 
 X_columns = ['temperature', 'cpu_percent', 'fan_rpm', 'sys_load_1', 'cpu_freq']
 y_column = 'next_temp'
@@ -16,7 +18,8 @@ def get_data(filename):
     sysinfo = pd.read_csv(filename, parse_dates=['timestamp'])
     
     # TODO: add the column that we want to predict: the temperatures from the *next* time step.
-    sysinfo[y_column] = sysinfo['temperature'] # should be the temperature value from the next row
+
+    sysinfo[y_column] = sysinfo['temperature'].shift(-1) # should be the temperature value from the next row
     sysinfo = sysinfo[sysinfo[y_column].notnull()] # the last row should have y_column null: no next temp known
     return sysinfo
 
@@ -30,6 +33,9 @@ def get_trained_coefficients(X_train, y_train):
     
     # TODO: create regression model and train.
 
+    model = LinearRegression(fit_intercept=False)
+    model.fit(X_train, y_train)
+    coefficients = model.coef_
     return model, coefficients
 
 
@@ -62,6 +68,7 @@ def smooth_test(coef, sysinfo, outfile):
     transition = np.identity(dims) # identity matrix, except...
     
     # TODO: replace the first row of transition to use the coefficients we just calculated (which were passed into this function as coef.).
+    transition[0] = coef
 
     kf = KalmanFilter(
         initial_state_mean=initial,
